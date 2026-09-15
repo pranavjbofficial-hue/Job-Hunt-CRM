@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Delete Company{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">Delete Company</h2>
+<div class="card card-stat p-4" style="max-width: 560px;">
+    <p>Are you sure you want to delete <strong>{{ object.name }}</strong>? This will also delete all of its applications and contacts. This can't be undone.</p>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Yes, delete it</button>
+        <a href="{% url 'company_detail' object.pk %}" class="btn btn-link">Cancel</a>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% load tracker_extras %}
+{% block title %}{{ application.job_title }}{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-start mb-4">
+    <div>
+        <h2 class="mb-1">{{ application.job_title }}</h2>
+        <p class="text-muted mb-0">
+            <a href="{% url 'company_detail' application.company.pk %}">{{ application.company.name }}</a>
+            {% if application.job_url %} &middot; <a href="{{ application.job_url }}" target="_blank">Job posting <i class="bi bi-box-arrow-up-right"></i></a>{% endif %}
+        </p>
+    </div>
+    <div>
+        <span class="badge fs-6 {{ application.status|status_badge_class }}">{{ application.get_status_display }}</span>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-7">
+        <div class="card card-stat p-3 mb-4">
+            <h5>Details</h5>
+            <dl class="row mb-0">
+                <dt class="col-sm-4">Applied on</dt>
+                <dd class="col-sm-8">{{ application.applied_on }} ({{ application.days_since_applied }} days ago)</dd>
+
+                {% if application.salary_min or application.salary_max %}
+                <dt class="col-sm-4">Salary range</dt>
+                <dd class="col-sm-8">
+                    {% if application.salary_min %}${{ application.salary_min }}{% endif %}
+                    {% if application.salary_max %} - ${{ application.salary_max }}{% endif %}
+                </dd>
+                {% endif %}
+
+                <dt class="col-sm-4">Notes</dt>
+                <dd class="col-sm-8">{{ application.notes|linebreaksbr|default:"—" }}</dd>
+            </dl>
+        </div>
+
+        <div class="d-flex gap-2">
+            <a href="{% url 'application_update' application.pk %}" class="btn btn-outline-secondary"><i class="bi bi-pencil"></i> Edit</a>
+            <a href="{% url 'application_delete' application.pk %}" class="btn btn-outline-danger"><i class="bi bi-trash"></i> Delete</a>
+        </div>
+    </div>
+
+    <div class="col-lg-5">
+        <div class="card card-stat p-3">
+            <h5 class="mb-3">Status History</h5>
+            <ul class="list-unstyled mb-0">
+                {% for entry in application.status_history.all %}
+                <li class="mb-2 pb-2 border-bottom">
+                    <span class="badge {{ entry.new_status|status_badge_class }}">{{ entry.get_new_status_display }}</span>
+                    <div class="text-muted small mt-1">{{ entry.changed_at|date:"M j, Y g:i A" }}</div>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}
